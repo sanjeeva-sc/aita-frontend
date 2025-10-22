@@ -2,12 +2,10 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { UserButton, useUser } from "@clerk/clerk-react";
 import { 
-  BookOpen, 
   FileText, 
   Home, 
   FileAudio,
-  HelpCircle,
-  Settings
+  HelpCircle
 } from 'lucide-react';
 
 interface SidebarProps {

@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
-import { useAuth } from '@clerk/clerk-react';
-import axios from 'axios';
-import { 
-  FileText, 
-  Settings, 
-  Sparkles, 
-  Clock,
+import { useAuth } from "@clerk/clerk-react";
+import axios from "axios";
+import {
   BookOpen,
+  CheckCircle,
+  Clock,
+  Lightbulb,
+  Sparkles,
   Target,
   Users,
-  Lightbulb,
-  CheckCircle,
-  X
-} from 'lucide-react';
+} from "lucide-react";
+import React, { useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
+import { Checkbox } from "../ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -20,16 +22,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../ui/dialog';
-import { Button } from '../ui/button';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Checkbox } from '../ui/checkbox';
-import { Badge } from '../ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { toast } from 'sonner';
+} from "../ui/dialog";
+import { Label } from "../ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Textarea } from "../ui/textarea";
 
 interface GenerateNotesModalProps {
   isOpen: boolean;
@@ -50,45 +46,69 @@ interface NotesTemplate {
 
 const notesTemplates: NotesTemplate[] = [
   {
-    id: 'comprehensive',
-    name: 'Comprehensive Notes',
-    description: 'Detailed notes with all key concepts, examples, and explanations',
+    id: "comprehensive",
+    name: "Comprehensive Notes",
+    description:
+      "Detailed notes with all key concepts, examples, and explanations",
     icon: <BookOpen className="h-5 w-5" />,
-    sections: ['Key Concepts', 'Detailed Explanations', 'Examples', 'Summary', 'Action Items'],
-    estimatedTime: '3-5 min'
+    sections: [
+      "Key Concepts",
+      "Detailed Explanations",
+      "Examples",
+      "Summary",
+      "Action Items",
+    ],
+    estimatedTime: "3-5 min",
   },
   {
-    id: 'summary',
-    name: 'Quick Summary',
-    description: 'Concise overview of main points and takeaways',
+    id: "summary",
+    name: "Quick Summary",
+    description: "Concise overview of main points and takeaways",
     icon: <Clock className="h-5 w-5" />,
-    sections: ['Main Points', 'Key Takeaways', 'Next Steps'],
-    estimatedTime: '1-2 min'
+    sections: ["Main Points", "Key Takeaways", "Next Steps"],
+    estimatedTime: "1-2 min",
   },
   {
-    id: 'study_guide',
-    name: 'Study Guide',
-    description: 'Structured notes optimized for student review and study',
+    id: "study_guide",
+    name: "Study Guide",
+    description: "Structured notes optimized for student review and study",
     icon: <Target className="h-5 w-5" />,
-    sections: ['Learning Objectives', 'Key Terms', 'Concepts', 'Practice Questions', 'Review Points'],
-    estimatedTime: '2-4 min'
+    sections: [
+      "Learning Objectives",
+      "Key Terms",
+      "Concepts",
+      "Practice Questions",
+      "Review Points",
+    ],
+    estimatedTime: "2-4 min",
   },
   {
-    id: 'lesson_plan',
-    name: 'Lesson Plan Format',
-    description: 'Notes formatted as a teaching lesson plan',
+    id: "lesson_plan",
+    name: "Lesson Plan Format",
+    description: "Notes formatted as a teaching lesson plan",
     icon: <Users className="h-5 w-5" />,
-    sections: ['Objectives', 'Materials', 'Activities', 'Assessment', 'Homework'],
-    estimatedTime: '3-4 min'
+    sections: [
+      "Objectives",
+      "Materials",
+      "Activities",
+      "Assessment",
+      "Homework",
+    ],
+    estimatedTime: "3-4 min",
   },
   {
-    id: 'insights',
-    name: 'Key Insights',
-    description: 'Focus on important insights, connections, and implications',
+    id: "insights",
+    name: "Key Insights",
+    description: "Focus on important insights, connections, and implications",
     icon: <Lightbulb className="h-5 w-5" />,
-    sections: ['Key Insights', 'Connections', 'Implications', 'Questions for Further Study'],
-    estimatedTime: '2-3 min'
-  }
+    sections: [
+      "Key Insights",
+      "Connections",
+      "Implications",
+      "Questions for Further Study",
+    ],
+    estimatedTime: "2-3 min",
+  },
 ];
 
 export const GenerateNotesModal: React.FC<GenerateNotesModalProps> = ({
@@ -96,48 +116,49 @@ export const GenerateNotesModal: React.FC<GenerateNotesModalProps> = ({
   onClose,
   transcriptId,
   transcriptTitle,
-  onSuccess
+  onSuccess,
 }) => {
   const { getToken } = useAuth();
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('comprehensive');
-  const [customInstructions, setCustomInstructions] = useState('');
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<string>("comprehensive");
+  const [customInstructions, setCustomInstructions] = useState("");
   const [includeTimestamps, setIncludeTimestamps] = useState(false);
   const [includeQuestions, setIncludeQuestions] = useState(true);
   const [focusAreas, setFocusAreas] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationStep, setGenerationStep] = useState('');
+  const [generationStep, setGenerationStep] = useState("");
 
   const availableFocusAreas = [
-    'Key Concepts',
-    'Practical Applications',
-    'Examples and Case Studies',
-    'Definitions and Terminology',
-    'Process and Procedures',
-    'Best Practices',
-    'Common Mistakes',
-    'Further Reading'
+    "Key Concepts",
+    "Practical Applications",
+    "Examples and Case Studies",
+    "Definitions and Terminology",
+    "Process and Procedures",
+    "Best Practices",
+    "Common Mistakes",
+    "Further Reading",
   ];
 
   const handleFocusAreaToggle = (area: string) => {
-    setFocusAreas(prev => 
-      prev.includes(area) 
-        ? prev.filter(a => a !== area)
-        : [...prev, area]
+    setFocusAreas((prev) =>
+      prev.includes(area) ? prev.filter((a) => a !== area) : [...prev, area]
     );
   };
 
   const handleGenerate = async () => {
     try {
       setIsGenerating(true);
-      setGenerationStep('Analyzing transcript...');
+      setGenerationStep("Analyzing transcript...");
 
       const token = await getToken();
       if (!token) {
-        toast.error('Authentication failed. Please sign in again.');
+        toast.error("Authentication failed. Please sign in again.");
         return;
       }
 
-      const selectedTemplateData = notesTemplates.find(t => t.id === selectedTemplate);
+      const selectedTemplateData = notesTemplates.find(
+        (t) => t.id === selectedTemplate
+      );
 
       const requestData = {
         transcriptId,
@@ -147,47 +168,54 @@ export const GenerateNotesModal: React.FC<GenerateNotesModalProps> = ({
           includeTimestamps,
           includeQuestions,
           focusAreas: focusAreas.length > 0 ? focusAreas : undefined,
-          sections: selectedTemplateData?.sections
-        }
+          sections: selectedTemplateData?.sections,
+        },
       };
 
-      setGenerationStep('Generating notes...');
+      setGenerationStep("Generating notes...");
 
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/notes/generate`,
         requestData,
-        { 
+        {
           headers: { Authorization: `Bearer ${token}` },
-          timeout: 120000 // 2 minute timeout for generation
+          timeout: 120000, // 2 minute timeout for generation
         }
       );
 
-      setGenerationStep('Finalizing...');
+      setGenerationStep("Finalizing...");
 
-      toast.success('Notes generated successfully!');
-      
+      toast.success("Notes generated successfully!");
+
       if (onSuccess) {
         onSuccess(response.data.notesId);
       }
-      
+
       onClose();
     } catch (error: any) {
-      console.error('Error generating notes:', error);
-      
-      if (error.code === 'ECONNABORTED') {
-        toast.error('Generation timed out. Please try again with a shorter transcript.');
+      console.error("Error generating notes:", error);
+
+      if (error.code === "ECONNABORTED") {
+        toast.error(
+          "Generation timed out. Please try again with a shorter transcript."
+        );
       } else if (error.response?.status === 429) {
-        toast.error('Too many requests. Please wait a moment and try again.');
+        toast.error("Too many requests. Please wait a moment and try again.");
       } else {
-        toast.error(error.response?.data?.message || 'Failed to generate notes. Please try again.');
+        toast.error(
+          error.response?.data?.message ||
+            "Failed to generate notes. Please try again."
+        );
       }
     } finally {
       setIsGenerating(false);
-      setGenerationStep('');
+      setGenerationStep("");
     }
   };
 
-  const selectedTemplateData = notesTemplates.find(t => t.id === selectedTemplate);
+  // const selectedTemplateData = notesTemplates.find(
+  //   (t) => t.id === selectedTemplate
+  // );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -216,25 +244,29 @@ export const GenerateNotesModal: React.FC<GenerateNotesModalProps> = ({
 
           <TabsContent value="template" className="space-y-4">
             <div className="space-y-3">
-              <Label className="text-base font-medium">Choose Notes Template</Label>
+              <Label className="text-base font-medium">
+                Choose Notes Template
+              </Label>
               <div className="grid gap-3">
                 {notesTemplates.map((template) => (
-                  <Card 
+                  <Card
                     key={template.id}
                     className={`cursor-pointer transition-all ${
-                      selectedTemplate === template.id 
-                        ? 'ring-2 ring-blue-500 bg-blue-50' 
-                        : 'hover:bg-gray-50'
+                      selectedTemplate === template.id
+                        ? "ring-2 ring-blue-500 bg-blue-50"
+                        : "hover:bg-gray-50"
                     }`}
                     onClick={() => setSelectedTemplate(template.id)}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">
-                        <div className={`p-2 rounded-lg ${
-                          selectedTemplate === template.id 
-                            ? 'bg-blue-100 text-blue-600' 
-                            : 'bg-gray-100 text-gray-600'
-                        }`}>
+                        <div
+                          className={`p-2 rounded-lg ${
+                            selectedTemplate === template.id
+                              ? "bg-blue-100 text-blue-600"
+                              : "bg-gray-100 text-gray-600"
+                          }`}
+                        >
                           {template.icon}
                         </div>
                         <div className="flex-1">
@@ -249,7 +281,11 @@ export const GenerateNotesModal: React.FC<GenerateNotesModalProps> = ({
                           </p>
                           <div className="flex flex-wrap gap-1">
                             {template.sections.map((section, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
+                              <Badge
+                                key={index}
+                                variant="outline"
+                                className="text-xs"
+                              >
                                 {section}
                               </Badge>
                             ))}
@@ -266,7 +302,10 @@ export const GenerateNotesModal: React.FC<GenerateNotesModalProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="custom-instructions" className="text-base font-medium">
+              <Label
+                htmlFor="custom-instructions"
+                className="text-base font-medium"
+              >
                 Custom Instructions (Optional)
               </Label>
               <Textarea
@@ -278,7 +317,8 @@ export const GenerateNotesModal: React.FC<GenerateNotesModalProps> = ({
                 className="resize-none"
               />
               <p className="text-xs text-muted-foreground">
-                Provide additional context or specific requirements for the AI to consider
+                Provide additional context or specific requirements for the AI
+                to consider
               </p>
             </div>
           </TabsContent>
@@ -286,35 +326,43 @@ export const GenerateNotesModal: React.FC<GenerateNotesModalProps> = ({
           <TabsContent value="options" className="space-y-4">
             <div className="space-y-4">
               <div className="space-y-3">
-                <Label className="text-base font-medium">Generation Options</Label>
-                
+                <Label className="text-base font-medium">
+                  Generation Options
+                </Label>
+
                 <div className="space-y-3">
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="timestamps"
                       checked={includeTimestamps}
-                      onCheckedChange={(checked) => setIncludeTimestamps(checked === true)}
+                      onCheckedChange={(checked) =>
+                        setIncludeTimestamps(checked === true)
+                      }
                     />
                     <Label htmlFor="timestamps" className="text-sm font-medium">
                       Include timestamps
                     </Label>
                   </div>
                   <p className="text-xs text-muted-foreground ml-6">
-                    Add time references to help locate content in the original transcript
+                    Add time references to help locate content in the original
+                    transcript
                   </p>
 
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="questions"
                       checked={includeQuestions}
-                      onCheckedChange={(checked) => setIncludeQuestions(checked === true)}
+                      onCheckedChange={(checked) =>
+                        setIncludeQuestions(checked === true)
+                      }
                     />
                     <Label htmlFor="questions" className="text-sm font-medium">
                       Include study questions
                     </Label>
                   </div>
                   <p className="text-xs text-muted-foreground ml-6">
-                    Generate relevant questions to help with comprehension and review
+                    Generate relevant questions to help with comprehension and
+                    review
                   </p>
                 </div>
               </div>

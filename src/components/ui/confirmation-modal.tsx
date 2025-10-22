@@ -1,5 +1,6 @@
-import React from 'react';
-import { AlertTriangle, Trash2, X } from 'lucide-react';
+import { AlertTriangle, Trash2 } from "lucide-react";
+import React from "react";
+import { Button } from "./button";
 import {
   Dialog,
   DialogContent,
@@ -7,8 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from './dialog';
-import { Button } from './button';
+} from "./dialog";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -18,7 +18,7 @@ interface ConfirmationModalProps {
   description: string;
   confirmText?: string;
   cancelText?: string;
-  variant?: 'destructive' | 'warning' | 'default';
+  variant?: "destructive" | "warning" | "default";
   isLoading?: boolean;
   icon?: React.ReactNode;
 }
@@ -29,19 +29,19 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onConfirm,
   title,
   description,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
-  variant = 'default',
+  confirmText = "Confirm",
+  cancelText = "Cancel",
+  variant = "default",
   isLoading = false,
-  icon
+  icon,
 }) => {
   const getIcon = () => {
     if (icon) return icon;
-    
+
     switch (variant) {
-      case 'destructive':
+      case "destructive":
         return <Trash2 className="h-6 w-6 text-red-600" />;
-      case 'warning':
+      case "warning":
         return <AlertTriangle className="h-6 w-6 text-yellow-600" />;
       default:
         return <AlertTriangle className="h-6 w-6 text-blue-600" />;
@@ -50,12 +50,12 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   const getConfirmButtonVariant = () => {
     switch (variant) {
-      case 'destructive':
-        return 'destructive';
-      case 'warning':
-        return 'secondary';
+      case "destructive":
+        return "destructive";
+      case "warning":
+        return "secondary";
       default:
-        return 'default';
+        return "default";
     }
   };
 
@@ -65,15 +65,13 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
             {getIcon()}
-            <DialogTitle className="text-lg font-semibold">
-              {title}
-            </DialogTitle>
+            <DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
           </div>
           <DialogDescription className="text-base">
             {description}
           </DialogDescription>
         </DialogHeader>
-        
+
         <DialogFooter className="flex gap-2 sm:gap-2">
           <Button
             variant="outline"
@@ -115,14 +113,16 @@ interface DeleteConfirmationModalProps {
   additionalWarning?: string;
 }
 
-export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = ({
+export const DeleteConfirmationModal: React.FC<
+  DeleteConfirmationModalProps
+> = ({
   isOpen,
   onClose,
   onConfirm,
   itemName,
   itemType,
   isLoading = false,
-  additionalWarning
+  additionalWarning,
 }) => {
   return (
     <ConfirmationModal
@@ -130,11 +130,9 @@ export const DeleteConfirmationModal: React.FC<DeleteConfirmationModalProps> = (
       onClose={onClose}
       onConfirm={onConfirm}
       title={`Delete ${itemType}`}
-      description={
-        `Are you sure you want to delete "${itemName}"? This action cannot be undone.${
-          additionalWarning ? ` ${additionalWarning}` : ''
-        }`
-      }
+      description={`Are you sure you want to delete "${itemName}"? This action cannot be undone.${
+        additionalWarning ? ` ${additionalWarning}` : ""
+      }`}
       confirmText="Delete"
       cancelText="Cancel"
       variant="destructive"

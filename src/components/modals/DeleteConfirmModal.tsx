@@ -8,8 +8,7 @@ import {
   BookOpen, 
   Brain,
   Users,
-  Clock,
-  CheckCircle
+  Clock
 } from 'lucide-react';
 import {
   Dialog,

@@ -1,22 +1,21 @@
-import React, { useState } from 'react';
-import { useAuth } from '@clerk/clerk-react';
-import axios from 'axios';
-import { 
-  Brain, 
-  Settings, 
-  Sparkles, 
+import { useAuth } from "@clerk/clerk-react";
+import axios from "axios";
+import {
+  BookOpen,
+  Brain,
+  CheckCircle,
   Clock,
   Target,
-  Users,
-  BookOpen,
-  CheckCircle,
-  AlertCircle,
-  HelpCircle,
-  List,
   ToggleLeft,
   ToggleRight,
-  Zap
-} from 'lucide-react';
+  Zap,
+} from "lucide-react";
+import React, { useState } from "react";
+import { toast } from "sonner";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
+import { Checkbox } from "../ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -24,18 +23,18 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '../ui/dialog';
-import { Button } from '../ui/button';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Checkbox } from '../ui/checkbox';
-import { Badge } from '../ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
-import { Slider } from '../ui/slider';
-import { Input } from '../ui/input';
-import { toast } from 'sonner';
+} from "../ui/dialog";
+import { Label } from "../ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
+import { Slider } from "../ui/slider";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Textarea } from "../ui/textarea";
 
 interface GenerateQuizModalProps {
   isOpen: boolean;
@@ -58,71 +57,111 @@ interface QuizTemplate {
 
 const quizTemplates: QuizTemplate[] = [
   {
-    id: 'comprehensive',
-    name: 'Comprehensive Assessment',
-    description: 'Mixed question types covering all key concepts',
+    id: "comprehensive",
+    name: "Comprehensive Assessment",
+    description: "Mixed question types covering all key concepts",
     icon: <BookOpen className="h-5 w-5" />,
-    questionTypes: ['Multiple Choice', 'True/False', 'Short Answer'],
-    difficulty: 'Mixed',
-    estimatedTime: '15-20 min',
-    recommendedQuestions: 15
+    questionTypes: ["Multiple Choice", "True/False", "Short Answer"],
+    difficulty: "Mixed",
+    estimatedTime: "15-20 min",
+    recommendedQuestions: 15,
   },
   {
-    id: 'quick_check',
-    name: 'Quick Knowledge Check',
-    description: 'Fast assessment of basic understanding',
+    id: "quick_check",
+    name: "Quick Knowledge Check",
+    description: "Fast assessment of basic understanding",
     icon: <Clock className="h-5 w-5" />,
-    questionTypes: ['Multiple Choice', 'True/False'],
-    difficulty: 'Easy',
-    estimatedTime: '5-10 min',
-    recommendedQuestions: 8
+    questionTypes: ["Multiple Choice", "True/False"],
+    difficulty: "Easy",
+    estimatedTime: "5-10 min",
+    recommendedQuestions: 8,
   },
   {
-    id: 'deep_understanding',
-    name: 'Deep Understanding',
-    description: 'Challenging questions testing critical thinking',
+    id: "deep_understanding",
+    name: "Deep Understanding",
+    description: "Challenging questions testing critical thinking",
     icon: <Brain className="h-5 w-5" />,
-    questionTypes: ['Short Answer', 'Essay', 'Multiple Choice'],
-    difficulty: 'Hard',
-    estimatedTime: '20-30 min',
-    recommendedQuestions: 10
+    questionTypes: ["Short Answer", "Essay", "Multiple Choice"],
+    difficulty: "Hard",
+    estimatedTime: "20-30 min",
+    recommendedQuestions: 10,
   },
   {
-    id: 'practice_test',
-    name: 'Practice Test',
-    description: 'Exam-style questions for test preparation',
+    id: "practice_test",
+    name: "Practice Test",
+    description: "Exam-style questions for test preparation",
     icon: <Target className="h-5 w-5" />,
-    questionTypes: ['Multiple Choice', 'True/False', 'Short Answer'],
-    difficulty: 'Mixed',
-    estimatedTime: '25-35 min',
-    recommendedQuestions: 20
+    questionTypes: ["Multiple Choice", "True/False", "Short Answer"],
+    difficulty: "Mixed",
+    estimatedTime: "25-35 min",
+    recommendedQuestions: 20,
   },
   {
-    id: 'interactive',
-    name: 'Interactive Quiz',
-    description: 'Engaging questions with immediate feedback',
+    id: "interactive",
+    name: "Interactive Quiz",
+    description: "Engaging questions with immediate feedback",
     icon: <Zap className="h-5 w-5" />,
-    questionTypes: ['Multiple Choice', 'True/False', 'Drag & Drop'],
-    difficulty: 'Easy-Medium',
-    estimatedTime: '10-15 min',
-    recommendedQuestions: 12
-  }
+    questionTypes: ["Multiple Choice", "True/False", "Drag & Drop"],
+    difficulty: "Easy-Medium",
+    estimatedTime: "10-15 min",
+    recommendedQuestions: 12,
+  },
 ];
 
 const questionTypes = [
-  { id: 'multiple_choice', name: 'Multiple Choice', description: 'Questions with 4 answer options' },
-  { id: 'true_false', name: 'True/False', description: 'Simple true or false questions' },
-  { id: 'short_answer', name: 'Short Answer', description: 'Brief written responses' },
-  { id: 'essay', name: 'Essay', description: 'Longer written responses' },
-  { id: 'fill_blank', name: 'Fill in the Blank', description: 'Complete the missing words' },
-  { id: 'matching', name: 'Matching', description: 'Match items from two lists' }
+  {
+    id: "multiple_choice",
+    name: "Multiple Choice",
+    description: "Questions with 4 answer options",
+  },
+  {
+    id: "true_false",
+    name: "True/False",
+    description: "Simple true or false questions",
+  },
+  {
+    id: "short_answer",
+    name: "Short Answer",
+    description: "Brief written responses",
+  },
+  { id: "essay", name: "Essay", description: "Longer written responses" },
+  {
+    id: "fill_blank",
+    name: "Fill in the Blank",
+    description: "Complete the missing words",
+  },
+  {
+    id: "matching",
+    name: "Matching",
+    description: "Match items from two lists",
+  },
 ];
 
 const difficultyLevels = [
-  { id: 'easy', name: 'Easy', description: 'Basic recall and understanding', color: 'bg-green-100 text-green-800' },
-  { id: 'medium', name: 'Medium', description: 'Application and analysis', color: 'bg-yellow-100 text-yellow-800' },
-  { id: 'hard', name: 'Hard', description: 'Synthesis and evaluation', color: 'bg-red-100 text-red-800' },
-  { id: 'mixed', name: 'Mixed', description: 'Combination of all levels', color: 'bg-blue-100 text-blue-800' }
+  {
+    id: "easy",
+    name: "Easy",
+    description: "Basic recall and understanding",
+    color: "bg-green-100 text-green-800",
+  },
+  {
+    id: "medium",
+    name: "Medium",
+    description: "Application and analysis",
+    color: "bg-yellow-100 text-yellow-800",
+  },
+  {
+    id: "hard",
+    name: "Hard",
+    description: "Synthesis and evaluation",
+    color: "bg-red-100 text-red-800",
+  },
+  {
+    id: "mixed",
+    name: "Mixed",
+    description: "Combination of all levels",
+    color: "bg-blue-100 text-blue-800",
+  },
 ];
 
 export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
@@ -130,102 +169,104 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
   onClose,
   transcriptId,
   transcriptTitle,
-  onSuccess
+  onSuccess,
 }) => {
   const { getToken } = useAuth();
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('comprehensive');
+  const [selectedTemplate, setSelectedTemplate] =
+    useState<string>("comprehensive");
   const [questionCount, setQuestionCount] = useState([15]);
-  const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>(['multiple_choice', 'true_false']);
-  const [difficulty, setDifficulty] = useState('mixed');
+  const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<string[]>([
+    "multiple_choice",
+    "true_false",
+  ]);
+  const [difficulty, setDifficulty] = useState("mixed");
   const [timeLimit, setTimeLimit] = useState([20]);
   const [allowRetakes, setAllowRetakes] = useState(true);
   const [shuffleQuestions, setShuffleQuestions] = useState(true);
   const [showCorrectAnswers, setShowCorrectAnswers] = useState(true);
-  const [customInstructions, setCustomInstructions] = useState('');
+  const [customInstructions, setCustomInstructions] = useState("");
   const [focusAreas, setFocusAreas] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationStep, setGenerationStep] = useState('');
+  const [generationStep, setGenerationStep] = useState("");
 
   const availableFocusAreas = [
-    'Key Concepts',
-    'Definitions',
-    'Processes',
-    'Examples',
-    'Applications',
-    'Best Practices',
-    'Common Mistakes',
-    'Critical Thinking'
+    "Key Concepts",
+    "Definitions",
+    "Processes",
+    "Examples",
+    "Applications",
+    "Best Practices",
+    "Common Mistakes",
+    "Critical Thinking",
   ];
 
   const handleTemplateSelect = (templateId: string) => {
     setSelectedTemplate(templateId);
-    const template = quizTemplates.find(t => t.id === templateId);
+    const template = quizTemplates.find((t) => t.id === templateId);
     if (template) {
       setQuestionCount([template.recommendedQuestions]);
-      
+
       // Set question types based on template
       const typeMapping: { [key: string]: string } = {
-        'Multiple Choice': 'multiple_choice',
-        'True/False': 'true_false',
-        'Short Answer': 'short_answer',
-        'Essay': 'essay',
-        'Drag & Drop': 'matching',
-        'Fill in the Blank': 'fill_blank'
+        "Multiple Choice": "multiple_choice",
+        "True/False": "true_false",
+        "Short Answer": "short_answer",
+        Essay: "essay",
+        "Drag & Drop": "matching",
+        "Fill in the Blank": "fill_blank",
       };
-      
+
       const mappedTypes = template.questionTypes
-        .map(type => typeMapping[type])
+        .map((type) => typeMapping[type])
         .filter(Boolean);
-      
+
       setSelectedQuestionTypes(mappedTypes);
-      
+
       // Set difficulty
       const difficultyMapping: { [key: string]: string } = {
-        'Easy': 'easy',
-        'Medium': 'medium',
-        'Hard': 'hard',
-        'Mixed': 'mixed',
-        'Easy-Medium': 'medium'
+        Easy: "easy",
+        Medium: "medium",
+        Hard: "hard",
+        Mixed: "mixed",
+        "Easy-Medium": "medium",
       };
-      
-      setDifficulty(difficultyMapping[template.difficulty] || 'mixed');
+
+      setDifficulty(difficultyMapping[template.difficulty] || "mixed");
     }
   };
 
   const handleQuestionTypeToggle = (typeId: string) => {
-    setSelectedQuestionTypes(prev => 
-      prev.includes(typeId) 
-        ? prev.filter(t => t !== typeId)
+    setSelectedQuestionTypes((prev) =>
+      prev.includes(typeId)
+        ? prev.filter((t) => t !== typeId)
         : [...prev, typeId]
     );
   };
 
   const handleFocusAreaToggle = (area: string) => {
-    setFocusAreas(prev => 
-      prev.includes(area) 
-        ? prev.filter(a => a !== area)
-        : [...prev, area]
+    setFocusAreas((prev) =>
+      prev.includes(area) ? prev.filter((a) => a !== area) : [...prev, area]
     );
   };
 
   const handleGenerate = async () => {
     if (selectedQuestionTypes.length === 0) {
-      toast.error('Please select at least one question type.');
+      toast.error("Please select at least one question type.");
       return;
     }
 
     if (questionCount[0] < 1 || questionCount[0] > 50) {
-      toast.error('Question count must be between 1 and 50.');
+      toast.error("Question count must be between 1 and 50.");
       return;
     }
 
     try {
       setIsGenerating(true);
-      setGenerationStep('Analyzing transcript content...');
+      setGenerationStep("Analyzing transcript content...");
 
       const token = await getToken();
       if (!token) {
-        toast.error('Authentication failed. Please sign in again.');
+        toast.error("Authentication failed. Please sign in again.");
         return;
       }
 
@@ -240,49 +281,56 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
           allowRetakes,
           shuffleQuestions,
           showCorrectAnswers,
-          focusAreas: focusAreas.length > 0 ? focusAreas : undefined
+          focusAreas: focusAreas.length > 0 ? focusAreas : undefined,
         },
-        customInstructions: customInstructions.trim() || undefined
+        customInstructions: customInstructions.trim() || undefined,
       };
 
-      setGenerationStep('Generating questions...');
+      setGenerationStep("Generating questions...");
 
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/quiz/generate`,
         requestData,
-        { 
+        {
           headers: { Authorization: `Bearer ${token}` },
-          timeout: 180000 // 3 minute timeout for generation
+          timeout: 180000, // 3 minute timeout for generation
         }
       );
 
-      setGenerationStep('Finalizing quiz...');
+      setGenerationStep("Finalizing quiz...");
 
-      toast.success('Quiz generated successfully!');
-      
+      toast.success("Quiz generated successfully!");
+
       if (onSuccess) {
         onSuccess(response.data.quizId);
       }
-      
+
       onClose();
     } catch (error: any) {
-      console.error('Error generating quiz:', error);
-      
-      if (error.code === 'ECONNABORTED') {
-        toast.error('Generation timed out. Please try again with fewer questions.');
+      console.error("Error generating quiz:", error);
+
+      if (error.code === "ECONNABORTED") {
+        toast.error(
+          "Generation timed out. Please try again with fewer questions."
+        );
       } else if (error.response?.status === 429) {
-        toast.error('Too many requests. Please wait a moment and try again.');
+        toast.error("Too many requests. Please wait a moment and try again.");
       } else {
-        toast.error(error.response?.data?.message || 'Failed to generate quiz. Please try again.');
+        toast.error(
+          error.response?.data?.message ||
+            "Failed to generate quiz. Please try again."
+        );
       }
     } finally {
       setIsGenerating(false);
-      setGenerationStep('');
+      setGenerationStep("");
     }
   };
 
-  const selectedTemplateData = quizTemplates.find(t => t.id === selectedTemplate);
-  const selectedDifficulty = difficultyLevels.find(d => d.id === difficulty);
+  const selectedTemplateData = quizTemplates.find(
+    (t) => t.id === selectedTemplate
+  );
+  const selectedDifficulty = difficultyLevels.find((d) => d.id === difficulty);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -312,25 +360,29 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
 
           <TabsContent value="template" className="space-y-4">
             <div className="space-y-3">
-              <Label className="text-base font-medium">Choose Quiz Template</Label>
+              <Label className="text-base font-medium">
+                Choose Quiz Template
+              </Label>
               <div className="grid gap-3">
                 {quizTemplates.map((template) => (
-                  <Card 
+                  <Card
                     key={template.id}
                     className={`cursor-pointer transition-all ${
-                      selectedTemplate === template.id 
-                        ? 'ring-2 ring-purple-500 bg-purple-50' 
-                        : 'hover:bg-gray-50'
+                      selectedTemplate === template.id
+                        ? "ring-2 ring-purple-500 bg-purple-50"
+                        : "hover:bg-gray-50"
                     }`}
                     onClick={() => handleTemplateSelect(template.id)}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start gap-3">
-                        <div className={`p-2 rounded-lg ${
-                          selectedTemplate === template.id 
-                            ? 'bg-purple-100 text-purple-600' 
-                            : 'bg-gray-100 text-gray-600'
-                        }`}>
+                        <div
+                          className={`p-2 rounded-lg ${
+                            selectedTemplate === template.id
+                              ? "bg-purple-100 text-purple-600"
+                              : "bg-gray-100 text-gray-600"
+                          }`}
+                        >
                           {template.icon}
                         </div>
                         <div className="flex-1">
@@ -345,13 +397,19 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
                           </p>
                           <div className="flex flex-wrap gap-1 mb-2">
                             {template.questionTypes.map((type, index) => (
-                              <Badge key={index} variant="outline" className="text-xs">
+                              <Badge
+                                key={index}
+                                variant="outline"
+                                className="text-xs"
+                              >
                                 {type}
                               </Badge>
                             ))}
                           </div>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span>{template.recommendedQuestions} questions</span>
+                            <span>
+                              {template.recommendedQuestions} questions
+                            </span>
                             <span>•</span>
                             <span>{template.difficulty} difficulty</span>
                           </div>
@@ -371,7 +429,9 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-base font-medium">Number of Questions</Label>
+                  <Label className="text-base font-medium">
+                    Number of Questions
+                  </Label>
                   <div className="px-3">
                     <Slider
                       value={questionCount}
@@ -383,14 +443,18 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
                     />
                     <div className="flex justify-between text-xs text-muted-foreground mt-1">
                       <span>1</span>
-                      <span className="font-medium">{questionCount[0]} questions</span>
+                      <span className="font-medium">
+                        {questionCount[0]} questions
+                      </span>
                       <span>50</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-base font-medium">Difficulty Level</Label>
+                  <Label className="text-base font-medium">
+                    Difficulty Level
+                  </Label>
                   <Select value={difficulty} onValueChange={setDifficulty}>
                     <SelectTrigger>
                       <SelectValue />
@@ -413,17 +477,27 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
 
               <div className="space-y-4">
                 <div className="space-y-3">
-                  <Label className="text-base font-medium">Question Types</Label>
+                  <Label className="text-base font-medium">
+                    Question Types
+                  </Label>
                   <div className="space-y-2">
                     {questionTypes.map((type) => (
-                      <div key={type.id} className="flex items-center space-x-2">
+                      <div
+                        key={type.id}
+                        className="flex items-center space-x-2"
+                      >
                         <Checkbox
                           id={type.id}
                           checked={selectedQuestionTypes.includes(type.id)}
-                          onCheckedChange={() => handleQuestionTypeToggle(type.id)}
+                          onCheckedChange={() =>
+                            handleQuestionTypeToggle(type.id)
+                          }
                         />
                         <div className="flex-1">
-                          <Label htmlFor={type.id} className="text-sm font-medium">
+                          <Label
+                            htmlFor={type.id}
+                            className="text-sm font-medium"
+                          >
                             {type.name}
                           </Label>
                           <p className="text-xs text-muted-foreground">
@@ -438,7 +512,9 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
             </div>
 
             <div className="space-y-3">
-              <Label className="text-base font-medium">Focus Areas (Optional)</Label>
+              <Label className="text-base font-medium">
+                Focus Areas (Optional)
+              </Label>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                 {availableFocusAreas.map((area) => (
                   <div key={area} className="flex items-center space-x-2">
@@ -460,7 +536,9 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-base font-medium">Time Limit (minutes)</Label>
+                  <Label className="text-base font-medium">
+                    Time Limit (minutes)
+                  </Label>
                   <div className="px-3">
                     <Slider
                       value={timeLimit}
@@ -472,7 +550,9 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
                     />
                     <div className="flex justify-between text-xs text-muted-foreground mt-1">
                       <span>5 min</span>
-                      <span className="font-medium">{timeLimit[0]} minutes</span>
+                      <span className="font-medium">
+                        {timeLimit[0]} minutes
+                      </span>
                       <span>120 min</span>
                     </div>
                   </div>
@@ -480,12 +560,16 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
 
                 <div className="space-y-3">
                   <Label className="text-base font-medium">Quiz Options</Label>
-                  
+
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div>
-                        <Label className="text-sm font-medium">Allow Retakes</Label>
-                        <p className="text-xs text-muted-foreground">Students can retake the quiz</p>
+                        <Label className="text-sm font-medium">
+                          Allow Retakes
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          Students can retake the quiz
+                        </p>
                       </div>
                       <Button
                         variant="ghost"
@@ -503,8 +587,12 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <Label className="text-sm font-medium">Shuffle Questions</Label>
-                        <p className="text-xs text-muted-foreground">Randomize question order</p>
+                        <Label className="text-sm font-medium">
+                          Shuffle Questions
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          Randomize question order
+                        </p>
                       </div>
                       <Button
                         variant="ghost"
@@ -522,13 +610,19 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
 
                     <div className="flex items-center justify-between">
                       <div>
-                        <Label className="text-sm font-medium">Show Correct Answers</Label>
-                        <p className="text-xs text-muted-foreground">Display answers after submission</p>
+                        <Label className="text-sm font-medium">
+                          Show Correct Answers
+                        </Label>
+                        <p className="text-xs text-muted-foreground">
+                          Display answers after submission
+                        </p>
                       </div>
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setShowCorrectAnswers(!showCorrectAnswers)}
+                        onClick={() =>
+                          setShowCorrectAnswers(!showCorrectAnswers)
+                        }
                         className="p-0 h-auto"
                       >
                         {showCorrectAnswers ? (
@@ -544,7 +638,10 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="custom-instructions" className="text-base font-medium">
+                  <Label
+                    htmlFor="custom-instructions"
+                    className="text-base font-medium"
+                  >
                     Custom Instructions (Optional)
                   </Label>
                   <Textarea
@@ -563,12 +660,17 @@ export const GenerateQuizModal: React.FC<GenerateQuizModalProps> = ({
                 {selectedTemplateData && (
                   <Card className="bg-purple-50 border-purple-200">
                     <CardContent className="p-4">
-                      <h4 className="font-medium text-purple-900 mb-2">Quiz Preview</h4>
+                      <h4 className="font-medium text-purple-900 mb-2">
+                        Quiz Preview
+                      </h4>
                       <div className="space-y-1 text-sm text-purple-800">
                         <p>• {questionCount[0]} questions</p>
                         <p>• {timeLimit[0]} minute time limit</p>
                         <p>• {selectedDifficulty?.name} difficulty</p>
-                        <p>• {selectedQuestionTypes.length} question type{selectedQuestionTypes.length !== 1 ? 's' : ''}</p>
+                        <p>
+                          • {selectedQuestionTypes.length} question type
+                          {selectedQuestionTypes.length !== 1 ? "s" : ""}
+                        </p>
                       </div>
                     </CardContent>
                   </Card>
