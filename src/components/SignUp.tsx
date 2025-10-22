@@ -1,4 +1,4 @@
-import { SignUp as ClerkSignUp } from '@clerk/clerk-react';
+import { SignUp as ClerkSignUp } from "@clerk/clerk-react";
 
 const SignUp = () => {
   return (
@@ -12,16 +12,17 @@ const SignUp = () => {
 
         {/* Clerk SignUp Component */}
         <div className="flex justify-center">
-          <ClerkSignUp 
-            routing="path" 
-            path="/sign-up" 
+          <ClerkSignUp
+            routing="path"
+            path="/sign-up"
             signInUrl="/sign-in"
             redirectUrl="/dashboard"
+            fallbackRedirectUrl="/dashboard"
             appearance={{
               elements: {
                 rootBox: "mx-auto",
                 card: "shadow-lg border-0",
-              }
+              },
             }}
           />
         </div>
