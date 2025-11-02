@@ -26,13 +26,14 @@ export const Dashboard: React.FC = () => {
 
   useEffect(() => {
     // Show a welcome toast only once per session
-    const hasShownWelcome = sessionStorage.getItem('aita-welcome-shown');
-    
+    const hasShownWelcome = sessionStorage.getItem("aita-welcome-shown");
+
     if (!hasShownWelcome) {
       toast.success("Welcome to AiTA!", {
-        description: "Your AI-powered transcript analysis tool is ready to use.",
+        description:
+          "Your AI-powered transcript analysis tool is ready to use.",
       });
-      sessionStorage.setItem('aita-welcome-shown', 'true');
+      sessionStorage.setItem("aita-welcome-shown", "true");
     }
   }, []);
 
@@ -205,10 +206,12 @@ export const Dashboard: React.FC = () => {
                   {recentNotes.map((note) => (
                     <div
                       key={note.id}
-                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                      className="flex items-center justify-between p-3 border border-neutral-200 rounded-lg hover:bg-muted/50 transition-colors"
                     >
                       <div className="flex-1">
-                        <p className="font-medium">{note.title || `Notes #${note.id}`}</p>
+                        <p className="font-medium">
+                          {note.title || `Notes #${note.id}`}
+                        </p>
                         <p className="text-sm text-muted-foreground">
                           {new Date(note.created_at).toLocaleDateString()}
                         </p>
@@ -249,10 +252,12 @@ export const Dashboard: React.FC = () => {
                   {recentQuizzes.map((quiz) => (
                     <div
                       key={quiz.id}
-                      className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
+                      className="flex items-center justify-between p-3 border border-neutral-200 rounded-lg hover:bg-muted/50 transition-colors"
                     >
                       <div className="flex-1">
-                        <p className="font-medium">{quiz.title || `Quiz #${quiz.id}`}</p>
+                        <p className="font-medium">
+                          {quiz.title || `Quiz #${quiz.id}`}
+                        </p>
                         <p className="text-sm text-muted-foreground">
                           {new Date(quiz.created_at).toLocaleDateString()}
                         </p>
