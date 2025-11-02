@@ -10,6 +10,7 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { useAppContext } from "../../context/AppContext";
+
 import { Button } from "../ui/button";
 import {
   Card,
@@ -24,10 +25,15 @@ export const Dashboard: React.FC = () => {
   const { notes, quizzes, templates, loading } = useAppContext();
 
   useEffect(() => {
-    // Show a welcome toast when the dashboard loads
-    toast.success("Welcome to AiTA!", {
-      description: "Your AI-powered transcript analysis tool is ready to use.",
-    });
+    // Show a welcome toast only once per session
+    const hasShownWelcome = sessionStorage.getItem('aita-welcome-shown');
+    
+    if (!hasShownWelcome) {
+      toast.success("Welcome to AiTA!", {
+        description: "Your AI-powered transcript analysis tool is ready to use.",
+      });
+      sessionStorage.setItem('aita-welcome-shown', 'true');
+    }
   }, []);
 
   if (loading) {
@@ -202,7 +208,7 @@ export const Dashboard: React.FC = () => {
                       className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
                     >
                       <div className="flex-1">
-                        <p className="font-medium">Notes #{note.id}</p>
+                        <p className="font-medium">{note.title || `Notes #${note.id}`}</p>
                         <p className="text-sm text-muted-foreground">
                           {new Date(note.created_at).toLocaleDateString()}
                         </p>
@@ -246,7 +252,7 @@ export const Dashboard: React.FC = () => {
                       className="flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors"
                     >
                       <div className="flex-1">
-                        <p className="font-medium">Quiz #{quiz.id}</p>
+                        <p className="font-medium">{quiz.title || `Quiz #${quiz.id}`}</p>
                         <p className="text-sm text-muted-foreground">
                           {new Date(quiz.created_at).toLocaleDateString()}
                         </p>

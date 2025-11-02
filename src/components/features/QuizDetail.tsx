@@ -110,7 +110,7 @@ export const QuizDetail: React.FC = () => {
                       className={`p-3 rounded-lg border ${
                         q.correct_answer === option ||
                         q.correct_answer === String.fromCharCode(65 + optIndex)
-                          ? "bg-green-100 border-green-200 dark:bg-green-100 dark:border-green-500"
+                          ? "bg-green-100 border-green-200"
                           : "bg-muted/50"
                       }`}
                     >
@@ -133,11 +133,11 @@ export const QuizDetail: React.FC = () => {
               {q.explanation && (
                 <>
                   <Separator />
-                  <div className="bg-blue-50 dark:bg-blue-50 p-4 rounded-lg border-l-4 border-l-blue-500">
-                    <h6 className="font-semibold text-blue-900 dark:text-blue-500 mb-2">
-                      Explanation:
-                    </h6>
-                    <p className="text-blue-700 dark:text-blue-500">
+                  <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-l-blue-500">
+                <h6 className="font-semibold text-blue-900 mb-2">
+                  Explanation
+                </h6>
+                <p className="text-blue-700">
                       {q.explanation}
                     </p>
                   </div>

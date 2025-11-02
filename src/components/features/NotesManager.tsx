@@ -129,7 +129,7 @@ export const NotesManager: React.FC = () => {
       {notesArray.map((note, index) => (
         <Card key={note.id || index}>
           <CardHeader>
-            <CardTitle>Notes #{note.id || index + 1}</CardTitle>
+            <CardTitle>{note.title || `Notes #${note.id || index + 1}`}</CardTitle>
             <CardDescription>
               AI-generated notes from your transcript
               {note.created_at && (

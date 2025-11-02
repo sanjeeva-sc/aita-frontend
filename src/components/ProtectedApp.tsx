@@ -13,7 +13,6 @@ import { QuizResults } from "./features/QuizResults";
 import { PageLoading } from "./ui/loading";
 import { ErrorBoundary } from "./ui/error-boundary";
 import { PageTransition } from "./ui/animations";
-import { Toaster } from "sonner";
 
 const ProtectedApp = () => {
   const { isLoaded, isSignedIn } = useUser();
@@ -53,12 +52,6 @@ const ProtectedApp = () => {
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </PageTransition>
-        <Toaster 
-          position="top-right"
-          expand={true}
-          richColors={true}
-          closeButton={true}
-        />
       </AppProvider>
     </ErrorBoundary>
   );

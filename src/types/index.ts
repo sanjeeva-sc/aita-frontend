@@ -18,6 +18,7 @@ export interface NotesData {
   format_type?: string;
   template_id?: string;
   created_at: string;
+  title?: string;
 }
 
 export interface Template {

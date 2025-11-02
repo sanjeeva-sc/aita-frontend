@@ -177,10 +177,19 @@ export const TranscriptUpload: React.FC<TranscriptUploadProps> = ({ onSuccess })
       
     } catch (err: any) {
       console.error("Error processing transcript:", err);
-      setError(
-        err.response?.data?.error ||
-          "Failed to process transcript. Please try again."
-      );
+      
+      // Handle specific error cases
+      if (err.response?.status === 409) {
+        setError(
+          "This transcript has already been processed. A duplicate was found with the same content."
+        );
+      } else {
+        setError(
+          err.response?.data?.error ||
+            "Failed to process transcript. Please try again."
+        );
+      }
+      
       setCurrentStep('idle');
       setUploadProgress(0);
     } finally {

@@ -1,13 +1,6 @@
 import { useAuth } from "@clerk/clerk-react";
 import axios from "axios";
-import {
-  AlertCircle,
-  ArrowLeft,
-  Brain,
-  Plus,
-  Save,
-  Settings,
-} from "lucide-react";
+import { AlertCircle, ArrowLeft, Plus, Save, Settings } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -185,11 +178,11 @@ export const QuizEdit: React.FC = () => {
     setShowAIModal(true);
   };
 
-  const handleAIRegenerate = () => {
-    setSelectedQuestionIndex(null);
-    setAIModalType("regenerate");
-    setShowAIModal(true);
-  };
+  // const handleAIRegenerate = () => {
+  //   setSelectedQuestionIndex(null);
+  //   setAIModalType("regenerate");
+  //   setShowAIModal(true);
+  // };
 
   const handleAISubmit = async (prompt: string) => {
     if (!quiz) return;
@@ -314,14 +307,14 @@ export const QuizEdit: React.FC = () => {
               Unsaved changes
             </Badge>
           )}
-          <Button
+          {/* <Button
             variant="outline"
             onClick={handleAIRegenerate}
             disabled={aiLoading}
           >
             <Brain className="h-4 w-4 mr-2" />
             AI Regenerate
-          </Button>
+          </Button> */}
           <Button onClick={handleSave} disabled={saving || !hasChanges}>
             {saving ? (
               <InlineLoading className="mr-2" />

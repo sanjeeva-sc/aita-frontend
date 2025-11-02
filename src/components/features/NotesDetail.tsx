@@ -159,7 +159,7 @@ export const NotesDetail: React.FC = () => {
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <FileText className="h-6 w-6" />
-              Notes #{note.id}
+              {note.title || `Notes #${note.id}`}
             </h1>
             <p className="text-muted-foreground">Detailed view</p>
           </div>
@@ -195,7 +195,7 @@ export const NotesDetail: React.FC = () => {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Hash className="h-5 w-5" />
-                Note #{note.id}
+                {note.title || `Note #${note.id}`}
               </CardTitle>
               <CardDescription>
                 AI-generated notes from your transcript
