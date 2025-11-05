@@ -42,6 +42,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleUserButtonClick = () => {
+    const trigger = document.querySelector(
+      '[data-test="user-button-avatar"]'
+    ) as HTMLElement | null;
+    trigger?.click();
+  };
+
   return (
     <div
       className={`
@@ -89,7 +96,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       {/* User Menu */}
       <div className="p-4 border-t border-slate-200">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          {/* <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center">
               <span className="text-slate-600 text-sm font-medium">
                 {user?.firstName?.[0] ||
@@ -97,15 +104,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
                   "U"}
               </span>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-900 truncate">
-                {user?.firstName || "User"}
-              </p>
-              <p className="text-xs text-slate-500 truncate">
-                {user?.emailAddresses[0]?.emailAddress}
-              </p>
-            </div>
-          </div>
+            x
+          </div> */}
           <UserButton
             afterSignOutUrl="/"
             appearance={{
@@ -114,6 +114,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
               },
             }}
           />
+          <div className="flex-1 ml-2 min-w-0" >
+            <p className="text-sm font-medium text-slate-900 truncate" onClick={handleUserButtonClick}>
+              {user?.firstName || "User"}
+            </p>
+            <p className="text-xs text-slate-500 truncate">
+              {user?.emailAddresses[0]?.emailAddress}
+            </p>
+          </div>
+          {/* <UserProfile /> */}
         </div>
       </div>
     </div>
