@@ -205,19 +205,19 @@ export const Dashboard: React.FC = () => {
                 <div className="space-y-3">
                   {recentNotes.map((note) => (
                     <div
-                      key={note.id}
+                      key={note._id}
                       className="flex items-center justify-between p-3 border border-neutral-200 rounded-lg hover:bg-muted/50 transition-colors"
                     >
                       <div className="flex-1">
                         <p className="font-medium">
-                          {note.title || `Notes #${note.id}`}
+                          {note.title || `Notes #${note._id}`}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {new Date(note.created_at).toLocaleDateString()}
                         </p>
                       </div>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link to={`/notes/${note.id}`}>View</Link>
+                        <Link to={`/notes/${note._id}`}>View</Link>
                       </Button>
                     </div>
                   ))}
@@ -251,12 +251,12 @@ export const Dashboard: React.FC = () => {
                 <div className="space-y-3">
                   {recentQuizzes.map((quiz) => (
                     <div
-                      key={quiz.id}
+                      key={quiz._id}
                       className="flex items-center justify-between p-3 border border-neutral-200 rounded-lg hover:bg-muted/50 transition-colors"
                     >
                       <div className="flex-1">
                         <p className="font-medium">
-                          {quiz.title || `Quiz #${quiz.id}`}
+                          {quiz.title || `Quiz #${quiz._id}`}
                         </p>
                         <p className="text-sm text-muted-foreground">
                           {new Date(quiz.created_at).toLocaleDateString()}
@@ -270,7 +270,7 @@ export const Dashboard: React.FC = () => {
                         )}
                       </div>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link to={`/quizzes/${quiz.id}`}>View</Link>
+                        <Link to={`/quizzes/${quiz._id}`}>View</Link>
                       </Button>
                     </div>
                   ))}

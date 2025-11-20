@@ -25,7 +25,7 @@ export const NotesDetail: React.FC = () => {
 
   useEffect(() => {
     if (notes && id) {
-      const foundNote = notes.find(n => n.id === parseInt(id));
+      const foundNote = notes.find(n => n._id === id);
       setNote(foundNote || null);
     }
   }, [notes, id]);
@@ -40,7 +40,7 @@ export const NotesDetail: React.FC = () => {
 
     // Add title
     pdf.setFontSize(16);
-    pdf.text(`Notes #${noteData.id}`, margin, 30);
+    pdf.text(`Notes #${noteData._id}`, margin, 30);
 
     // Add metadata
     pdf.setFontSize(10);
@@ -63,14 +63,14 @@ export const NotesDetail: React.FC = () => {
       yPosition += 7;
     });
 
-    pdf.save(`notes-${noteData.id}.pdf`);
+    pdf.save(`notes-${noteData._id}.pdf`);
   };
 
   const downloadNotesAsMarkdown = (noteData: NotesData) => {
     if (!noteData) return;
 
     // Convert HTML to Markdown
-    let markdown = `# Notes #${noteData.id}\n\n`;
+    let markdown = `# Notes #${noteData._id}\n\n`;
     markdown += `**Created:** ${new Date(noteData.created_at).toLocaleString()}\n\n`;
     markdown += "---\n\n";
     
@@ -95,7 +95,7 @@ export const NotesDetail: React.FC = () => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `notes-${noteData.id}.md`;
+    a.download = `notes-${noteData._id}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -159,7 +159,7 @@ export const NotesDetail: React.FC = () => {
           <div>
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <FileText className="h-6 w-6" />
-              {note.title || `Notes #${note.id}`}
+              {note.title || `Notes #${note._id}`}
             </h1>
             <p className="text-muted-foreground">Detailed view</p>
           </div>
@@ -195,7 +195,7 @@ export const NotesDetail: React.FC = () => {
             <div>
               <CardTitle className="flex items-center gap-2">
                 <Hash className="h-5 w-5" />
-                {note.title || `Note #${note.id}`}
+                {note.title || `Note #${note._id}`}
               </CardTitle>
               <CardDescription>
                 AI-generated notes from your transcript

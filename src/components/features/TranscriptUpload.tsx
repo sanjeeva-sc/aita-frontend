@@ -23,7 +23,7 @@ import { NotesCustomization, defaultNotesOptions } from './NotesCustomization';
 import { QuizCustomization, defaultQuizOptions } from './QuizCustomization';
 
 interface TranscriptUploadProps {
-  onSuccess?: (notesId: number) => void;
+  onSuccess?: (notesId: string) => void;
 }
 
 export const TranscriptUpload: React.FC<TranscriptUploadProps> = ({ onSuccess }) => {

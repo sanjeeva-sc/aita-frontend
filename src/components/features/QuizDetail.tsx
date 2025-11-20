@@ -36,7 +36,7 @@ export const QuizDetail: React.FC = () => {
   const [shareUrl, setShareUrl] = useState<string | null>(null);
 
   const quiz = Array.isArray(quizzes)
-    ? quizzes.find((q) => q.id === parseInt(id || "0"))
+    ? quizzes.find((q: any) => q._id === (id || ""))
     : undefined;
 
   const handleShareQuiz = async () => {
@@ -51,7 +51,7 @@ export const QuizDetail: React.FC = () => {
       }
 
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/quiz/${quiz.id}/share`,
+        `${import.meta.env.VITE_BACKEND_URL}/quiz/${quiz._id}/share`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -200,13 +200,13 @@ export const QuizDetail: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <Button variant="outline" asChild>
-            <Link to={`/quizzes/${quiz.id}/edit`}>
+            <Link to={`/quizzes/${quiz._id}/edit`}>
               <Edit className="h-4 w-4 mr-2" />
               Edit Quiz
             </Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link to={`/quizzes/${quiz.id}/results`}>
+            <Link to={`/quizzes/${quiz._id}/results`}>
               <BarChart3 className="h-4 w-4 mr-2" />
               View Results
             </Link>

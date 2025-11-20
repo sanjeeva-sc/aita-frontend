@@ -26,7 +26,7 @@ import { Input } from "../ui/input";
 import { Loading } from "../ui/loading";
 
 interface Transcript {
-  id: number;
+  id: string;
   title: string;
   contentSnippet: string;
   uploadDate: string;
@@ -34,8 +34,8 @@ interface Transcript {
   notesGenerated: boolean;
   quizGenerated: boolean;
   wordCount: number;
-  notesId?: number | null;
-  quizId?: number | null;
+  notesId?: string | null;
+  quizId?: string | null;
 }
 
 export const TranscriptList: React.FC = () => {
@@ -145,15 +145,26 @@ export const TranscriptList: React.FC = () => {
             Manage your uploaded transcripts and generate notes & quizzes
           </p>
         </div>
-        <Button asChild>
-          <Link
-            to="/transcripts?tab=upload"
-            className="flex items-center gap-2"
-          >
-            <Plus className="h-4 w-4" />
-            Upload Transcript
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button asChild>
+            <Link
+              to="/transcripts?tab=record"
+              className="flex items-center gap-2"
+            >
+              <FileText className="h-4 w-4" />
+              Record Class
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link
+              to="/transcripts?tab=upload"
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Upload Transcript
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Search and Filter */}

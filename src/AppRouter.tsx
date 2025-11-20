@@ -1,4 +1,5 @@
 import { useUser } from "@clerk/clerk-react";
+import { useEffect } from "react";
 import {
   Navigate,
   Route,
@@ -14,7 +15,21 @@ import { SignIn, SignUp } from "@clerk/clerk-react";
 import { PageLoading } from "./components/ui/loading";
 
 const AppRouter = () => {
-  const { isSignedIn, isLoaded } = useUser();
+  const { isSignedIn, isLoaded, user } = useUser();
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn && user) {
+      const currentUnsafe = (user.unsafeMetadata || {}) as Record<string, unknown>;
+      const existingRoles = Array.isArray((currentUnsafe as any).roles)
+        ? ((currentUnsafe as any).roles as string[])
+        : [];
+      if (!existingRoles.includes("teacher")) {
+        const newRoles = Array.from(new Set([...existingRoles, "teacher"]));
+        const newUnsafe = { ...currentUnsafe, roles: newRoles } as Record<string, unknown>;
+        user.update({ unsafeMetadata: newUnsafe }).catch(() => {});
+      }
+    }
+  }, [isLoaded, isSignedIn, user]);
 
   if (!isLoaded) {
     return <PageLoading message="Initializing application..." />;

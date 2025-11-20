@@ -34,7 +34,7 @@ interface QuizListProps {
 export const QuizList: React.FC<QuizListProps> = ({ quizzes, loading }) => {
   const navigate = useNavigate();
   const { getToken } = useAuth();
-  const [shareLoading, setShareLoading] = useState<number | null>(null);
+  const [shareLoading, setShareLoading] = useState<string | null>(null);
   const [shareSuccess, setShareSuccess] = useState<string | null>(null);
   const [shareError, setShareError] = useState<string | null>(null);
 
@@ -43,13 +43,13 @@ export const QuizList: React.FC<QuizListProps> = ({ quizzes, loading }) => {
 
   const handleShareQuiz = async (quiz: QuizResponse) => {
     try {
-      setShareLoading(quiz.id);
+      setShareLoading(quiz._id);
       setShareError(null);
       setShareSuccess(null);
 
       const token = await getToken();
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/quiz/${quiz.id}/share`,
+        `${import.meta.env.VITE_BACKEND_URL}/quiz/${quiz._id}/share`,
         {},
         {
           headers: {
@@ -73,11 +73,11 @@ export const QuizList: React.FC<QuizListProps> = ({ quizzes, loading }) => {
     }
   };
 
-  const handleViewQuiz = (quizId: number) => {
+  const handleViewQuiz = (quizId: string) => {
     navigate(`/quizzes/${quizId}`);
   };
 
-  const handleViewResults = (quizId: number) => {
+  const handleViewResults = (quizId: string) => {
     navigate(`/quizzes/${quizId}/results`);
   };
 
@@ -188,9 +188,9 @@ export const QuizList: React.FC<QuizListProps> = ({ quizzes, loading }) => {
 
           return (
             <Card
-              key={quiz.id || index}
+              key={quiz._id || index}
               className="hover:shadow-md transition-shadow cursor-pointer group"
-              onClick={() => handleViewQuiz(quiz.id)}
+              onClick={() => handleViewQuiz(quiz._id)}
             >
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
@@ -210,7 +210,7 @@ export const QuizList: React.FC<QuizListProps> = ({ quizzes, loading }) => {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleViewResults(quiz.id)}
+                      onClick={() => handleViewResults(quiz._id)}
                       className="opacity-0 group-hover:opacity-100 transition-opacity"
                     >
                       <BarChart3 className="h-4 w-4 mr-2" />
@@ -220,9 +220,9 @@ export const QuizList: React.FC<QuizListProps> = ({ quizzes, loading }) => {
                       variant="outline"
                       size="sm"
                       onClick={() => handleShareQuiz(quiz)}
-                      disabled={shareLoading === quiz.id}
+                      disabled={shareLoading === quiz._id}
                     >
-                      {shareLoading === quiz.id ? (
+                      {shareLoading === quiz._id ? (
                         <>
                           <InlineLoading size="sm" />
                           Sharing...

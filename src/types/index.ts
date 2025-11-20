@@ -12,7 +12,7 @@ export interface QuizData {
 }
 
 export interface NotesData {
-  id: number;
+  _id: string;
   transcript: string;
   notes: string;
   format_type?: string;
@@ -30,8 +30,8 @@ export interface Template {
 }
 
 export interface QuizResponse {
-  id: number;
-  transcript_id: number;
+  _id: string;
+  transcript_id?: string;
   questions: QuizData;
   created_at: string;
   title?: string;

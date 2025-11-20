@@ -15,7 +15,7 @@ import { ErrorBoundary } from "./ui/error-boundary";
 import { PageTransition } from "./ui/animations";
 
 const ProtectedApp = () => {
-  const { isLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
 
   if (!isLoaded) {
     return <PageLoading message="Loading your workspace..." />;
@@ -23,6 +23,14 @@ const ProtectedApp = () => {
 
   if (!isSignedIn) {
     window.location.href = "/";
+    return null;
+  }
+
+  const roles = Array.isArray(((user?.unsafeMetadata || {}) as any).roles)
+    ? (((user?.unsafeMetadata || {}) as any).roles as string[])
+    : [];
+  if (!roles.includes("teacher")) {
+    window.location.href = "/sign-in";
     return null;
   }
 

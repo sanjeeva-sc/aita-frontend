@@ -32,7 +32,7 @@ interface QuizQuestion {
 }
 
 interface QuizData {
-  id: number;
+  _id: string;
   title?: string;
   description?: string;
   timeLimit?: number;
@@ -81,7 +81,7 @@ export const QuizEdit: React.FC = () => {
 
       if (response.data && response.data.questions) {
         setQuiz({
-          id: parseInt(id!),
+          _id: id!,
           title: response.data.title || `Quiz ${id}`,
           description: response.data.description || "",
           timeLimit: response.data.time_limit || 0,

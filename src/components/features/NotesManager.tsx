@@ -127,9 +127,9 @@ export const NotesManager: React.FC = () => {
       </div>
       
       {notesArray.map((note, index) => (
-        <Card key={note.id || index}>
+        <Card key={note._id || index}>
           <CardHeader>
-            <CardTitle>{note.title || `Notes #${note.id || index + 1}`}</CardTitle>
+            <CardTitle>{note.title || `Notes #${note._id || index + 1}`}</CardTitle>
             <CardDescription>
               AI-generated notes from your transcript
               {note.created_at && (
@@ -139,7 +139,7 @@ export const NotesManager: React.FC = () => {
               )}
             </CardDescription>
             <div className="flex gap-2">
-              <Link to={`/notes/${note.id}`}>
+              <Link to={`/notes/${note._id}`}>
                 <Button variant="default" size="sm">
                   View Details
                 </Button>
